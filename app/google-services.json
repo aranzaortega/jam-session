@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "629283462536",
+    "project_id": "jamsession-5af0f",
+    "storage_bucket": "jamsession-5af0f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:629283462536:android:840c6e2baedf554324ae3d",
+        "android_client_info": {
+          "package_name": "com.aios.jamsession"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "629283462536-d324eeb9nb3irjo6qmd821176iorhok7.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.aios.jamsession",
+            "certificate_hash": "3330fa3c9a7e18ada00aae7bb1ad3b7ad9ae6dcf"
+          }
+        },
+        {
+          "client_id": "629283462536-i8f9ve9t558esuqigd2n0u9uqg897q4f.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD6I7oo-wIMx191DNaZVpxLmozJZlkRwx0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "629283462536-i8f9ve9t558esuqigd2n0u9uqg897q4f.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

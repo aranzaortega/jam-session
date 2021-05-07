@@ -1,5 +1,6 @@
 package com.aios.jamsession;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
@@ -8,16 +9,34 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.SignInButton;
+import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.GoogleAuthProvider;
 
 public class MainActivity extends AppCompatActivity {
 
-    // Variables
+    // Members
     TextView mTextViewRegister;
     TextInputEditText mTextInputEmail;
     TextInputEditText mTextInputPassword;
     Button mLoginButton;
+    FirebaseAuth mAuth;
+    SignInButton mLoginGoogleButton;
+    private GoogleSignInClient mGoogleSignInClient;
+    private final int REQUEST_CODE_GOOGLE = 1;
 
     //Methods
 
@@ -28,17 +47,37 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         // Find and assign the variables that are in the xml script
+        // Instance
         mTextViewRegister = findViewById(R.id.textViewRegister);
         mTextInputEmail = findViewById(R.id.textInputEmail);
         mTextInputPassword = findViewById(R.id.textInputPassword);
         mLoginButton = findViewById(R.id.loginButton);
+        mLoginGoogleButton = findViewById(R.id.loginGoogleButton);
 
+        mAuth = FirebaseAuth.getInstance();
+
+        // Configure Google Sign In
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestEmail()
+                .build();
+
+        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
+
+        // Events
         mLoginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 login();
             }
-        };
+        });
+
+        mLoginGoogleButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                signInGoogle();
+            }
+        });
 
         mTextViewRegister.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -53,7 +92,63 @@ public class MainActivity extends AppCompatActivity {
     private void login(){
         String email = mTextInputEmail.getText().toString();
         String password = mTextInputPassword.getText().toString();
-        Log.d("CAMPO", "email: " + email);
-        Log.d("CAMPO", "password: " + password);
+
+        mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+            @Override
+            public void onComplete(@NonNull Task<AuthResult> task) {
+                if (task.isSuccessful()){
+                    Intent intent = new Intent(MainActivity.this, HomeActivity.class);
+                    startActivity(intent);
+                } else {
+                    Toast.makeText(MainActivity.this, "Las credenciales no son correctas", Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+    }
+
+    // To call the Google account sign in
+    private void signInGoogle() {
+        Intent signInIntent = mGoogleSignInClient.getSignInIntent();
+        startActivityForResult(signInIntent, REQUEST_CODE_GOOGLE);
+    }
+
+    // Waits till the user makes an action (select their account)
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
+        if (requestCode == REQUEST_CODE_GOOGLE) {
+            Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
+            try {
+                // Google Sign In was successful, authenticate with Firebase
+                GoogleSignInAccount account = task.getResult(ApiException.class);
+                Log.d("SUCCESS", "firebaseAuthWithGoogle:" + account.getId());
+                firebaseAuthWithGoogle(account.getIdToken());
+            } catch (ApiException e) {
+                // Google Sign In failed, update UI appropriately
+                Log.w("ERROR", "Google sign in failed", e);
+            }
+        }
+    }
+
+    // Validate the sign in with Google credentials
+    private void firebaseAuthWithGoogle(String idToken) {
+        AuthCredential credential = GoogleAuthProvider.getCredential(idToken, null);
+        mAuth.signInWithCredential(credential)
+            .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                @Override
+                public void onComplete(@NonNull Task<AuthResult> task) {
+                    if (task.isSuccessful()) {
+                        // Sign in success, update UI with the signed-in user's information
+                        Intent intent = new Intent(MainActivity.this, RegisterActivity.class);
+                        startActivity(intent);
+                    } else {
+                        // If sign in fails, display a message to the user.
+                        Log.w("ERROR", "signInWithCredential:failure", task.getException());
+                        Toast.makeText(MainActivity.this, "No se pudo iniciar sesión con Google", Toast.LENGTH_LONG).show();
+                    }
+                }
+            });
     }
 }
