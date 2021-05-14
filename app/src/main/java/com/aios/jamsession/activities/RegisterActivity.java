@@ -1,16 +1,19 @@
-package com.aios.jamsession;
+package com.aios.jamsession.activities;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.aios.jamsession.R;
+import com.aios.jamsession.models.User;
+import com.aios.jamsession.providers.AuthProvider;
+import com.aios.jamsession.providers.UsersProvider;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputEditText;
@@ -32,8 +35,10 @@ public class RegisterActivity extends AppCompatActivity {
     TextInputEditText mTextInputPassword;
     TextInputEditText mTextInputConfirmPassword;
     Button mRegisterButton;
-    FirebaseAuth mAuth;
-    FirebaseFirestore mFirestore;
+
+    // Providers
+    AuthProvider mAuthProvider;
+    UsersProvider mUsersProvider;
 
     // Methods
 
@@ -56,8 +61,9 @@ public class RegisterActivity extends AppCompatActivity {
         mTextInputPassword = findViewById(R.id.textInputPassword);
         mTextInputConfirmPassword = findViewById(R.id.textInputConfirmPassword);
         mRegisterButton = findViewById(R.id.registerButton);
-        mAuth = FirebaseAuth.getInstance();
-        mFirestore = FirebaseFirestore.getInstance();
+
+        mAuthProvider = new AuthProvider();
+        mUsersProvider = new UsersProvider();
 
         // Events
         mRegisterButton.setOnClickListener(new View.OnClickListener() {
@@ -119,21 +125,21 @@ public class RegisterActivity extends AppCompatActivity {
      * Connection with database
      */
     private void createUser(String username, String email, String password){
-        mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(
+        mAuthProvider.register(email, password).addOnCompleteListener(
             new OnCompleteListener<AuthResult>() {
                 @Override
                 public void onComplete(@NonNull Task<AuthResult> task) {
                     if(task.isSuccessful()){
                         // Get de current user ID
-                        String id = mAuth.getCurrentUser().getUid();
+                        String id = mAuthProvider.getUserId();
 
-                        // Create the document structure and assign value
-                        Map<String, Object> map = new HashMap<>();
-                        map.put("username", username);
-                        map.put("email", email);
+                        User user =  new User();
+                        user.setId(id);
+                        user.setEmail(email);
+                        user.setUsername(username);
 
                         // Create a document (User) with the current User ID in the Users Collection
-                        mFirestore.collection("Users").document(id).set(map).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        mUsersProvider.create(user).addOnCompleteListener(new OnCompleteListener<Void>() {
                             // Validate if the task is successful
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {

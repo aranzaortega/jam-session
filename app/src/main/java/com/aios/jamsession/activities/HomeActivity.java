@@ -1,8 +1,10 @@
-package com.aios.jamsession;
+package com.aios.jamsession.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+
+import com.aios.jamsession.R;
 
 public class HomeActivity extends AppCompatActivity {
 
