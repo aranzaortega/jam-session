@@ -3,6 +3,7 @@ package com.aios.jamsession.activities;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -35,6 +36,8 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.HashMap;
 import java.util.Map;
 
+import dmax.dialog.SpotsDialog;
+
 public class MainActivity extends AppCompatActivity {
 
     // Members
@@ -45,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
     SignInButton mLoginGoogleButton;
     private GoogleSignInClient mGoogleSignInClient;
     private final int REQUEST_CODE_GOOGLE = 1;
+    AlertDialog mDialog;
 
     // Providers
     AuthProvider mAuthProvider;
@@ -59,13 +63,18 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         // Find and assign the variables that are in the xml script
-        // Instance
         mTextViewRegister = findViewById(R.id.textViewRegister);
         mTextInputEmail = findViewById(R.id.textInputEmail);
         mTextInputPassword = findViewById(R.id.textInputPassword);
         mLoginButton = findViewById(R.id.loginButton);
         mLoginGoogleButton = findViewById(R.id.loginGoogleButton);
 
+        // General instances
+        mDialog = new SpotsDialog.Builder()
+                .setContext(this)
+                .setMessage("Espere un momento")
+                .setCancelable(false)
+                .build();
         mAuthProvider = new AuthProvider();
         mUsersProvider = new UsersProvider();
 
@@ -105,11 +114,21 @@ public class MainActivity extends AppCompatActivity {
     private void login(){
         String email = mTextInputEmail.getText().toString();
         String password = mTextInputPassword.getText().toString();
+
+        // Show waiting message
+        mDialog.show();
+
+        // When the task is over
         mAuthProvider.login(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
+                // Dismiss waiting message
+                mDialog.dismiss();
                 if (task.isSuccessful()){
                     Intent intent = new Intent(MainActivity.this, HomeActivity.class);
+                    // To clear the activity record
+                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    // Join to home activity
                     startActivity(intent);
                 } else {
                     Toast.makeText(MainActivity.this, "Las credenciales no son correctas", Toast.LENGTH_LONG).show();
@@ -145,6 +164,9 @@ public class MainActivity extends AppCompatActivity {
 
     // Validate the sign in with Google credentials
     private void firebaseAuthWithGoogle(GoogleSignInAccount account) {
+        // Show waiting message
+        mDialog.show();
+
         mAuthProvider.googleLogin(account)
             .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                 @Override
@@ -153,6 +175,9 @@ public class MainActivity extends AppCompatActivity {
                         String id = mAuthProvider.getUserId();
                         checkUserExist(id);
                     } else {
+                        // Dismiss waiting message
+                        mDialog.dismiss();
+
                         // If sign in fails, display a message to the user.
                         Log.w("ERROR", "signInWithCredential:failure", task.getException());
                         Toast.makeText(MainActivity.this, "No se pudo iniciar sesión con Google", Toast.LENGTH_LONG).show();
@@ -167,6 +192,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
                 if (documentSnapshot.exists()){
+                    // Dismiss dialog message
+                    mDialog.dismiss();
+
                     // Sign in success, update UI with the signed-in user's information
                     Intent intent = new Intent(MainActivity.this, HomeActivity.class);
                     startActivity(intent);
@@ -180,7 +208,10 @@ public class MainActivity extends AppCompatActivity {
                     mUsersProvider.create(user).addOnCompleteListener(new OnCompleteListener<Void>() {
                            @Override
                            public void onComplete(@NonNull Task<Void> task) {
-                                if (task.isSuccessful()){
+                               // Dismiss dialog message
+                               mDialog.dismiss();
+
+                               if (task.isSuccessful()){
                                     // Sign in success, update UI with the signed-in user's information
                                     Intent intent = new Intent(MainActivity.this, CompleteProfileActivity.class);
                                     startActivity(intent);

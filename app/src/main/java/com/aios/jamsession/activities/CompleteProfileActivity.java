@@ -3,6 +3,7 @@ package com.aios.jamsession.activities;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -22,6 +23,8 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.HashMap;
 import java.util.Map;
 
+import dmax.dialog.SpotsDialog;
+
 public class CompleteProfileActivity extends AppCompatActivity {
 
     // Variables
@@ -29,6 +32,7 @@ public class CompleteProfileActivity extends AppCompatActivity {
     Button mRegisterButton;
     AuthProvider mAuthProvider;
     UsersProvider mUsersProvider;
+    AlertDialog mDialog;
 
     // Methods
 
@@ -40,13 +44,16 @@ public class CompleteProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_complete_profile);
 
-        // Instances
-
-        /*
-         * Find and assign the variables that are in the xml script
-         */
+        // Find and assign the variables that are in the xml script
         mTextInputUsername = findViewById(R.id.textInputUsername);
         mRegisterButton = findViewById(R.id.registerButton);
+
+        // General instances
+        mDialog = new SpotsDialog.Builder()
+                .setContext(this)
+                .setMessage("Espere un momento")
+                .setCancelable(false)
+                .build();
 
         mAuthProvider = new AuthProvider();
         mUsersProvider = new UsersProvider();
@@ -86,11 +93,17 @@ public class CompleteProfileActivity extends AppCompatActivity {
         user.setUsername(username);
         user.setId(id);
 
+        // Show waiting message
+        mDialog.show();
+
         // Create a document (User) with the current User ID in the Users Collection
         mUsersProvider.update(user).addOnCompleteListener(new OnCompleteListener<Void>() {
             // Validate if the task is successful
             @Override
             public void onComplete(@NonNull Task<Void> task) {
+                // Dismiss waiting message
+                mDialog.dismiss();
+
                 if (task.isSuccessful()){
                     Intent intent = new Intent(CompleteProfileActivity.this, HomeActivity.class);
                     startActivity(intent);
