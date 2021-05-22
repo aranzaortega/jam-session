@@ -29,14 +29,15 @@
                 android:textSize="18dp" />
 
             <LinearLayout
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="10dp"
+                android:layout_gravity="center_horizontal"
                 android:orientation="horizontal">
 
                 <androidx.cardview.widget.CardView
-                    android:layout_width="0dp"
-                    android:layout_height="80dp"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
                     android:layout_margin="10dp"
                     android:layout_weight="1"
                     app:cardBackgroundColor="@color/white"
@@ -45,14 +46,14 @@
                     <ImageView
                         android:id="@+id/imageViewPost1"
                         android:layout_width="match_parent"
-                        android:layout_height="80dp"
+                        android:layout_height="100dp"
                         android:src="@drawable/ic_image_search" />
 
                 </androidx.cardview.widget.CardView>
 
                 <androidx.cardview.widget.CardView
-                    android:layout_width="0dp"
-                    android:layout_height="80dp"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
                     android:layout_margin="10dp"
                     android:layout_weight="1"
                     app:cardBackgroundColor="@color/white"
@@ -61,23 +62,7 @@
                     <ImageView
                         android:id="@+id/imageViewPost2"
                         android:layout_width="match_parent"
-                        android:layout_height="80dp"
-                        android:src="@drawable/ic_image_search" />
-
-                </androidx.cardview.widget.CardView>
-
-                <androidx.cardview.widget.CardView
-                    android:layout_width="0dp"
-                    android:layout_height="80dp"
-                    android:layout_margin="10dp"
-                    android:layout_weight="1"
-                    app:cardBackgroundColor="@color/white"
-                    app:cardCornerRadius="10dp">
-
-                    <ImageView
-                        android:id="@+id/imageViewPost3"
-                        android:layout_width="match_parent"
-                        android:layout_height="80dp"
+                        android:layout_height="100dp"
                         android:src="@drawable/ic_image_search" />
 
                 </androidx.cardview.widget.CardView>
@@ -110,7 +95,7 @@
                     android:theme="@style/EditTextWhite">
 
                     <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/textInputName"
+                        android:id="@+id/textInputTitle"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="Nombre del evento"
@@ -195,7 +180,7 @@
                     android:theme="@style/EditTextWhite">
 
                     <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/textInputConfirmPassword"
+                        android:id="@+id/textInputDate"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="Fecha"
@@ -206,9 +191,10 @@
             </LinearLayout>
 
             <TextView
+                android:id="@+id/textViewGenre"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="GÉNEROS"
+                android:text="GÉNERO MUSICAL"
                 android:textAlignment="center"
                 android:layout_marginTop="10dp"
                 android:textSize="18dp"
@@ -234,6 +220,7 @@
                         app:cardBackgroundColor="@color/black">
 
                         <ImageView
+                            android:id="@+id/imageViewJazz"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:src="@drawable/genre_jazz" />
@@ -263,6 +250,7 @@
                         app:cardBackgroundColor="@color/black">
 
                         <ImageView
+                            android:id="@+id/imageViewBlues"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:src="@drawable/genre_blues"/>
@@ -292,6 +280,7 @@
                         app:cardBackgroundColor="@color/black">
 
                         <ImageView
+                            android:id="@+id/imageViewRock"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:src="@drawable/genre_rock"/>
@@ -321,6 +310,7 @@
                         app:cardBackgroundColor="@color/black">
 
                         <ImageView
+                            android:id="@+id/imageViewRap"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:src="@drawable/genre_rap"/>
@@ -353,5 +343,13 @@
         </LinearLayout>
 
     </LinearLayout>
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/circleImageBack"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:src="@drawable/ic_arrow_back"
+        android:layout_margin="15dp"
+        android:scaleType="centerCrop"/>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

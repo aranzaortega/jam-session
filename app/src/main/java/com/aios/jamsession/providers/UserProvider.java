@@ -10,13 +10,13 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.HashMap;
 import java.util.Map;
 
-public class UsersProvider {
+public class UserProvider {
 
     // CRUD FIRESTORE
 
     private CollectionReference mCollection;
 
-    public UsersProvider() {
+    public UserProvider() {
         mCollection = FirebaseFirestore.getInstance().collection("Users");
     }
 

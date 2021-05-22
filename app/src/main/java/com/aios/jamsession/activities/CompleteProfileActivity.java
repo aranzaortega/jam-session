@@ -13,7 +13,7 @@ import android.widget.Toast;
 import com.aios.jamsession.R;
 import com.aios.jamsession.models.User;
 import com.aios.jamsession.providers.AuthProvider;
-import com.aios.jamsession.providers.UsersProvider;
+import com.aios.jamsession.providers.UserProvider;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputEditText;
@@ -31,7 +31,7 @@ public class CompleteProfileActivity extends AppCompatActivity {
     TextInputEditText mTextInputUsername;
     Button mRegisterButton;
     AuthProvider mAuthProvider;
-    UsersProvider mUsersProvider;
+    UserProvider mUserProvider;
     AlertDialog mDialog;
 
     // Methods
@@ -56,7 +56,7 @@ public class CompleteProfileActivity extends AppCompatActivity {
                 .build();
 
         mAuthProvider = new AuthProvider();
-        mUsersProvider = new UsersProvider();
+        mUserProvider = new UserProvider();
 
         // Events
         mRegisterButton.setOnClickListener(new View.OnClickListener() {
@@ -97,7 +97,7 @@ public class CompleteProfileActivity extends AppCompatActivity {
         mDialog.show();
 
         // Create a document (User) with the current User ID in the Users Collection
-        mUsersProvider.update(user).addOnCompleteListener(new OnCompleteListener<Void>() {
+        mUserProvider.update(user).addOnCompleteListener(new OnCompleteListener<Void>() {
             // Validate if the task is successful
             @Override
             public void onComplete(@NonNull Task<Void> task) {

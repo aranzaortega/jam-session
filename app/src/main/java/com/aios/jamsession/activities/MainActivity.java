@@ -15,7 +15,7 @@ import android.widget.Toast;
 import com.aios.jamsession.R;
 import com.aios.jamsession.models.User;
 import com.aios.jamsession.providers.AuthProvider;
-import com.aios.jamsession.providers.UsersProvider;
+import com.aios.jamsession.providers.UserProvider;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -52,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
 
     // Providers
     AuthProvider mAuthProvider;
-    UsersProvider mUsersProvider;
+    UserProvider mUserProvider;
 
     //Methods
 
@@ -76,7 +76,7 @@ public class MainActivity extends AppCompatActivity {
                 .setCancelable(false)
                 .build();
         mAuthProvider = new AuthProvider();
-        mUsersProvider = new UsersProvider();
+        mUserProvider = new UserProvider();
 
         // Configure Google Sign In
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -188,7 +188,7 @@ public class MainActivity extends AppCompatActivity {
 
     // Check if google user exists in firestore database
     private void checkUserExist(final String id) {
-        mUsersProvider.getUser(id).addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+        mUserProvider.getUser(id).addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
                 if (documentSnapshot.exists()){
@@ -205,7 +205,7 @@ public class MainActivity extends AppCompatActivity {
                     user.setId(id);
 
                     // If the task was successful (the data was stored in the database)
-                    mUsersProvider.create(user).addOnCompleteListener(new OnCompleteListener<Void>() {
+                    mUserProvider.create(user).addOnCompleteListener(new OnCompleteListener<Void>() {
                            @Override
                            public void onComplete(@NonNull Task<Void> task) {
                                // Dismiss dialog message
