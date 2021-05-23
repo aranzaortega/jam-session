@@ -50,8 +50,8 @@ public class PostActivity extends AppCompatActivity {
     ImageView mImageViewBlues;
     ImageView mImageViewRock;
     ImageView mImageViewRap;
-    AlertDialog mDialog;
     CircleImageView mCircleImageBack;
+    AlertDialog mDialog;
 
     private final int GALLERY_REQUEST_CODE = 1;
     private final int GALLERY_REQUEST_CODE_2 = 2;
@@ -206,6 +206,7 @@ public class PostActivity extends AppCompatActivity {
                                                 post.setDate(mDate);
                                                 post.setGenre(mGenre);
                                                 post.setIduser(mAuthProvider.getUserId());
+                                                post.setTimestamp(new Date().getTime());
 
                                                 mPostProvider.save(post).addOnCompleteListener(new OnCompleteListener<Void>() {
                                                     @Override
@@ -264,6 +265,7 @@ public class PostActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+
         if(requestCode == GALLERY_REQUEST_CODE && resultCode == RESULT_OK){
             try {
                 // Select the image from gallery

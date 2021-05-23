@@ -20,6 +20,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.AuthResult;
 
+import java.util.Date;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 
@@ -147,6 +148,7 @@ public class RegisterActivity extends AppCompatActivity {
                         user.setId(id);
                         user.setEmail(email);
                         user.setUsername(username);
+                        user.setTimestamp(new Date().getTime());
 
                         // Create a document (User) with the current User ID in the Users Collection
                         mUserProvider.create(user).addOnCompleteListener(new OnCompleteListener<Void>() {
