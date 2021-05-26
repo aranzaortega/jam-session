@@ -33,7 +33,7 @@ public class PostDetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post_detail);
 
-        mSliderView.findViewById(R.id.imageSlider);
+        mSliderView = findViewById(R.id.imageSlider);
         mPostProvider = new PostProvider();
         mExtraPostId = getIntent().getStringExtra("id");
 
@@ -59,10 +59,10 @@ public class PostDetailActivity extends AppCompatActivity {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
                 if(documentSnapshot.exists()){
-                    if(documentSnapshot.contains("image1")){
-                        String image1 = documentSnapshot.getString("image1");
+                    if(documentSnapshot.contains("image")){
+                        String image = documentSnapshot.getString("image");
                         SliderItem item = new SliderItem();
-                        item.setImageURL(image1);
+                        item.setImageURL(image);
                         mSliderItems.add(item);
                     }
                     if(documentSnapshot.contains("image2")){
