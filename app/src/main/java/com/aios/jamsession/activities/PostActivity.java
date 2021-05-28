@@ -128,7 +128,7 @@ public class PostActivity extends AppCompatActivity {
         mImageViewJazz.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mGenre = "Jazz";
+                mGenre = "JAZZ";
                 mTextViewGenre.setText(mGenre);
             }
         });
@@ -136,7 +136,7 @@ public class PostActivity extends AppCompatActivity {
         mImageViewBlues.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mGenre = "Blues";
+                mGenre = "BLUES";
                 mTextViewGenre.setText(mGenre);
             }
         });
@@ -144,7 +144,7 @@ public class PostActivity extends AppCompatActivity {
         mImageViewRock.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mGenre = "Rock";
+                mGenre = "ROCK";
                 mTextViewGenre.setText(mGenre);
             }
         });
@@ -152,7 +152,7 @@ public class PostActivity extends AppCompatActivity {
         mImageViewRap.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mGenre = "Rap";
+                mGenre = "RAP";
                 mTextViewGenre.setText(mGenre);
             }
         });

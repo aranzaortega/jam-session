@@ -16,17 +16,12 @@ import android.widget.TextView;
 import com.aios.jamsession.R;
 import com.aios.jamsession.activities.EditProfileActivity;
 import com.aios.jamsession.providers.AuthProvider;
-import com.aios.jamsession.providers.ImageProvider;
 import com.aios.jamsession.providers.PostProvider;
 import com.aios.jamsession.providers.UserProvider;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.squareup.picasso.Picasso;
-
-import org.w3c.dom.Text;
-
-import java.io.File;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
