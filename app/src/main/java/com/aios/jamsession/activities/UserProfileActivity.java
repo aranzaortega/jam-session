@@ -1,20 +1,15 @@
-package com.aios.jamsession.fragments;
+package com.aios.jamsession.activities;
 
-import android.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+
 import android.content.Intent;
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.aios.jamsession.R;
-import com.aios.jamsession.activities.EditProfileActivity;
 import com.aios.jamsession.providers.AuthProvider;
 import com.aios.jamsession.providers.PostProvider;
 import com.aios.jamsession.providers.UserProvider;
@@ -25,56 +20,54 @@ import com.squareup.picasso.Picasso;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class ProfileFragment extends Fragment {
+public class UserProfileActivity extends AppCompatActivity {
 
-    View mView;
     LinearLayout mLinearLayoutEditProfile;
     TextView mTextViewUsername;
     TextView mTextViewEmail;
     TextView mTextViewPostsNumber;
     ImageView mImageViewCover;
     CircleImageView mCircleImageProfile;
+    CircleImageView mCircleImageViewBack;
 
     UserProvider mUserProvider;
     AuthProvider mAuthProvider;
     PostProvider mPostProvider;
-
-    public ProfileFragment() {
-        // Required empty public constructor
-    }
+    String mExtraIdUser;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_user_profile);
 
-        // Inflate the layout for this fragment
-        mView = inflater.inflate(R.layout.fragment_profile, container, false);
-
-        mLinearLayoutEditProfile = mView.findViewById(R.id.linearLayoutEditProfile);
-        mTextViewUsername = mView.findViewById(R.id.textViewUsername);
-        mTextViewEmail = mView.findViewById(R.id.textViewEmail);
-        mTextViewPostsNumber = mView.findViewById(R.id.textViewPostsNumber);
-        mImageViewCover = mView.findViewById(R.id.imageViewCover);
-        mCircleImageProfile = mView.findViewById(R.id.circleImageProfile);
-
-        mLinearLayoutEditProfile.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                goToEditProfile();
-            }
-        });
-
+        mLinearLayoutEditProfile = findViewById(R.id.linearLayoutEditProfile);
+        mTextViewUsername = findViewById(R.id.textViewUsername);
+        mTextViewEmail = findViewById(R.id.textViewEmail);
+        mTextViewPostsNumber = findViewById(R.id.textViewPostsNumber);
+        mImageViewCover = findViewById(R.id.imageViewCover);
+        mCircleImageProfile = findViewById(R.id.circleImageProfile); 
+        mCircleImageViewBack = findViewById(R.id.circleImageBack);
+        
         mUserProvider = new UserProvider();
         mAuthProvider = new AuthProvider();
         mPostProvider = new PostProvider();
 
-        getUser();
+        mExtraIdUser = getIntent().getStringExtra("iduser");
 
-        return mView;
+        getUser();
+        getPostsNumber();
+
+        mCircleImageViewBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+
     }
 
     private void getPostsNumber(){
-        mPostProvider.getPostsByUser(mAuthProvider.getUserId()).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+        mPostProvider.getPostsByUser(mExtraIdUser).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override
             public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                 int numberPosts = queryDocumentSnapshots.size();
@@ -84,13 +77,8 @@ public class ProfileFragment extends Fragment {
         });
     }
 
-    private void goToEditProfile() {
-        Intent intent = new Intent(getContext(), EditProfileActivity.class);
-        startActivity(intent);
-    }
-
     private void getUser(){
-        mUserProvider.getUser(mAuthProvider.getUserId()).addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+        mUserProvider.getUser(mExtraIdUser).addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
                 if(documentSnapshot.exists()){
@@ -106,7 +94,7 @@ public class ProfileFragment extends Fragment {
                         String imageProfile = documentSnapshot.getString("image_profile");
                         if(imageProfile != null){
                             if(!imageProfile.isEmpty()){
-                                Picasso.with(getContext()).load(imageProfile).into(mCircleImageProfile);
+                                Picasso.with(UserProfileActivity.this).load(imageProfile).into(mCircleImageProfile);
                             }
                         }
                     }
@@ -114,7 +102,7 @@ public class ProfileFragment extends Fragment {
                         String imageCover = documentSnapshot.getString("image_cover");
                         if(imageCover != null){
                             if(!imageCover.isEmpty()){
-                                Picasso.with(getContext()).load(imageCover).into(mImageViewCover);
+                                Picasso.with(UserProfileActivity.this).load(imageCover).into(mImageViewCover);
                             }
                         }
                     }
