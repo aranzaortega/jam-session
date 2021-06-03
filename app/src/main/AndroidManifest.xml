@@ -12,8 +12,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.JamSession">
-        <activity android:name=".activities.UserProfileActivity"></activity>
-        <activity android:name=".activities.PostDetailActivity" />
+        <!--Set parent to an activity-->
+        <activity android:name=".activities.UserProfileActivity"
+            android:parentActivityName=".activities.PostDetailActivity"/>
+        <activity android:name=".activities.PostDetailActivity"
+            android:parentActivityName=".activities.HomeActivity"/>
         <activity android:name=".activities.EditProfileActivity" />
         <activity android:name=".activities.PostActivity" />
         <activity android:name=".activities.CompleteProfileActivity" />

@@ -24,10 +24,14 @@ public class PostProvider {
     }
 
     public Query getPostsByUser(String id){
-        return mCollection.whereEqualTo("idUser", id);
+        return mCollection.whereEqualTo("iduser", id);
     }
 
     public Task<DocumentSnapshot> getPostById(String id){
         return mCollection.document(id).get();
+    }
+
+    public Task<Void> delete(String id){
+        return mCollection.document(id).delete();
     }
 }

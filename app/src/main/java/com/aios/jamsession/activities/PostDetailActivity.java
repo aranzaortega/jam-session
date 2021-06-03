@@ -1,8 +1,10 @@
 package com.aios.jamsession.activities;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -28,15 +30,20 @@ import com.aios.jamsession.models.Post;
 import com.aios.jamsession.models.SliderItem;
 import com.aios.jamsession.providers.AuthProvider;
 import com.aios.jamsession.providers.CommentProvider;
+import com.aios.jamsession.providers.JoinProvider;
 import com.aios.jamsession.providers.PostProvider;
 import com.aios.jamsession.providers.UserProvider;
+import com.aios.jamsession.utils.RelativeTime;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.gson.internal.$Gson$Preconditions;
 import com.smarteist.autoimageslider.IndicatorView.animation.type.IndicatorAnimationType;
 import com.smarteist.autoimageslider.SliderAnimations;
@@ -55,11 +62,12 @@ public class PostDetailActivity extends AppCompatActivity {
     SliderAdapter mSliderAdapter;
     List<SliderItem> mSliderItems = new ArrayList<>();
     String mExtraPostId;
-    CircleImageView mCircleImageViewBack;
     String mIdUser = "";
 
     RecyclerView mRecyclerViewComments;
     CommentsAdapter mCommentsAdapter;
+    TextView mTextViewRelativeTime;
+    TextView mTextViewJoiners;
 
     TextView mTextViewTitle;
     TextView mTextViewDescription;
@@ -71,12 +79,14 @@ public class PostDetailActivity extends AppCompatActivity {
     TextView mTextViewDate;
     TextView mTextViewLocation;
     FloatingActionButton mFloatingActionButtonComments;
+    Toolbar mToolbar;
 
     // Allows us to get data from the database
     PostProvider mPostProvider;
     UserProvider mUserProvider;
     CommentProvider mCommentProvider;
     AuthProvider mAuthProvider;
+    JoinProvider mJoinProvider;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,14 +97,17 @@ public class PostDetailActivity extends AppCompatActivity {
         mUserProvider = new UserProvider();
         mCommentProvider = new CommentProvider();
         mAuthProvider = new AuthProvider();
+        mJoinProvider = new JoinProvider();
 
         mSliderView = findViewById(R.id.imageSlider);
         mExtraPostId = getIntent().getStringExtra("id");
-        mCircleImageViewBack = findViewById(R.id.circleImageBack);
         mRecyclerViewComments = findViewById(R.id.recyclerViewComments);
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(PostDetailActivity.this);
         mRecyclerViewComments.setLayoutManager(linearLayoutManager);
+
+        mTextViewRelativeTime = findViewById(R.id.textViewRelativeTime);
+        mTextViewJoiners = findViewById(R.id.textViewJoiners);
 
         mTextViewTitle = findViewById(R.id.textViewTitle);
         mTextViewUsername = findViewById(R.id.textViewUsername);
@@ -106,15 +119,11 @@ public class PostDetailActivity extends AppCompatActivity {
         mCircleImageViewProfile = findViewById(R.id.circleImageProfile);
         mButtonShowProfile = findViewById(R.id.buttonShowProfile);
         mFloatingActionButtonComments = findViewById(R.id.floatingActionButtonComments);
+        mToolbar = findViewById(R.id.toolBar);
 
-        getPost();
-
-        mCircleImageViewBack.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
+        setSupportActionBar(mToolbar);
+        getSupportActionBar().setTitle("");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         mButtonShowProfile.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -127,6 +136,23 @@ public class PostDetailActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 showDialogComment();
+            }
+        });
+
+        getPost();
+        getNumberJoins();
+    }
+
+    private void getNumberJoins() {
+        mJoinProvider.getJoinsByPost(mExtraPostId).addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException error) {
+                int numberJoins = queryDocumentSnapshots.size();
+                if(numberJoins == 1){
+                    mTextViewJoiners.setText(numberJoins + " Participante");
+                } else {
+                    mTextViewJoiners.setText(numberJoins + " Participantes");
+                }
             }
         });
     }
@@ -293,6 +319,11 @@ public class PostDetailActivity extends AppCompatActivity {
                     if(documentSnapshot.contains("iduser")){
                         mIdUser = documentSnapshot.getString("iduser");
                         getUserInfo(mIdUser);
+                    }
+                    if(documentSnapshot.contains("timestamp")){
+                        long timestamp = documentSnapshot.getLong("timestamp");
+                        String relativeTime = RelativeTime.getTimeAgo(timestamp, PostDetailActivity.this);
+                        mTextViewRelativeTime.setText(relativeTime);
                     }
 
                     instanceSlider();

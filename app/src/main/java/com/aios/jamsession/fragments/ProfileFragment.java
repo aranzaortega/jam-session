@@ -2,9 +2,13 @@ package com.aios.jamsession.fragments;
 
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,11 +19,18 @@ import android.widget.TextView;
 
 import com.aios.jamsession.R;
 import com.aios.jamsession.activities.EditProfileActivity;
+import com.aios.jamsession.adapters.MyPostsAdapter;
+import com.aios.jamsession.adapters.PostsAdapter;
+import com.aios.jamsession.models.Post;
 import com.aios.jamsession.providers.AuthProvider;
 import com.aios.jamsession.providers.PostProvider;
 import com.aios.jamsession.providers.UserProvider;
+import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.squareup.picasso.Picasso;
 
@@ -27,6 +38,9 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class ProfileFragment extends Fragment {
 
+    MyPostsAdapter mPostAdapter;
+
+    RecyclerView mRecyclerView;
     View mView;
     LinearLayout mLinearLayoutEditProfile;
     TextView mTextViewUsername;
@@ -34,6 +48,7 @@ public class ProfileFragment extends Fragment {
     TextView mTextViewPostsNumber;
     ImageView mImageViewCover;
     CircleImageView mCircleImageProfile;
+    TextView mTextViewPostsExist;
 
     UserProvider mUserProvider;
     AuthProvider mAuthProvider;
@@ -56,6 +71,13 @@ public class ProfileFragment extends Fragment {
         mTextViewPostsNumber = mView.findViewById(R.id.textViewPostsNumber);
         mImageViewCover = mView.findViewById(R.id.imageViewCover);
         mCircleImageProfile = mView.findViewById(R.id.circleImageProfile);
+        mTextViewPostsExist = mView.findViewById(R.id.textViewPostsExist);
+
+        mRecyclerView = mView.findViewById(R.id.recyclerViewMyPosts);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
+        mRecyclerView.setLayoutManager(linearLayoutManager);
+
+
 
         mLinearLayoutEditProfile.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -69,19 +91,45 @@ public class ProfileFragment extends Fragment {
         mPostProvider = new PostProvider();
 
         getUser();
-
+        checkIfExistPosts();
+        
         return mView;
     }
 
-    private void getPostsNumber(){
-        mPostProvider.getPostsByUser(mAuthProvider.getUserId()).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+    private void checkIfExistPosts() {
+        mPostProvider.getPostsByUser(mAuthProvider.getUserId()).addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
-            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                int numberPosts = queryDocumentSnapshots.size();
-                // numberPosts += 1;
-                mTextViewPostsNumber.setText(String.valueOf(numberPosts));
+            public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                int numberPosts = value.size();
+                if(numberPosts > 0) {
+                    mTextViewPostsExist.setText("Publicaciones");
+                    mTextViewPostsExist.setTextColor(Color.BLACK);
+                } else {
+                    mTextViewPostsExist.setText("No hay publicaciones");
+                    mTextViewPostsExist.setTextColor(Color.GRAY);
+                }
             }
         });
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        Query query = mPostProvider.getPostsByUser(mAuthProvider.getUserId());
+        FirestoreRecyclerOptions<Post> options =
+                new FirestoreRecyclerOptions.Builder<Post>()
+                        .setQuery(query, Post.class)
+                        .build();
+        mPostAdapter = new MyPostsAdapter(options, getContext());
+        mRecyclerView.setAdapter(mPostAdapter);
+        mPostAdapter.startListening();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        mPostAdapter.stopListening();
     }
 
     private void goToEditProfile() {
