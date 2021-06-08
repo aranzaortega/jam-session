@@ -9,7 +9,7 @@
         android:id="@+id/ToolBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/dark_violet"
+        android:background="@color/steal_pink"
         app:theme="@style/ToolBarWhite"/>
     
 </com.google.android.material.appbar.AppBarLayout>

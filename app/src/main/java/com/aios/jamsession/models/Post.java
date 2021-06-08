@@ -1,7 +1,5 @@
 package com.aios.jamsession.models;
 
-import java.util.Date;
-
 public class Post {
     private String id;
     private String title;

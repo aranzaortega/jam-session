@@ -31,7 +31,7 @@
                 android:layout_height="wrap_content"
                 android:text="Título de la publicación"
                 android:maxLines="1"
-                android:textColor="@color/black"
+                android:textColor="@color/white"
                 android:textSize="16dp"/>
 
             <TextView
@@ -40,7 +40,7 @@
                 android:layout_height="wrap_content"
                     android:text="Hace 0 min"
                 android:maxLines="1"
-                android:textColor="@color/black"
+                android:textColor="@color/white"
                 android:textSize="14dp"
                 android:layout_marginTop="3dp"/>
 

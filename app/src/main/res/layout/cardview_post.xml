@@ -9,7 +9,8 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:background="@color/black_gray">
         
         <ImageView
             android:id="@+id/imageViewPostCard"
@@ -25,7 +26,7 @@
             android:padding="10dp"
             android:textSize="16dp"
             android:maxLines="1"
-            android:textColor="@color/flickr_blue"/>
+            android:textColor="@color/yellow"/>
 
         <TextView
             android:id="@+id/textViewDescriptionPostCard"
@@ -33,7 +34,8 @@
             android:layout_height="wrap_content"
             android:text="Descripción"
             android:layout_margin="10dp"
-            android:maxLines="2"/>
+            android:maxLines="2"
+            android:textColor="@color/white"/>
 
         <TextView
             android:id="@+id/textViewLocationPostCard"
@@ -41,14 +43,16 @@
             android:layout_height="wrap_content"
             android:text="Lugar"
             android:layout_margin="10dp"
-            android:maxLines="2"/>
+            android:maxLines="2"
+            android:textColor="@color/white"/>
 
         <TextView
             android:id="@+id/textViewDatePostCard"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Fecha"
-            android:layout_margin="10dp"/>
+            android:layout_margin="10dp"
+            android:textColor="@color/yellow"/>
 
         <View
             android:layout_width="match_parent"
@@ -68,7 +72,7 @@
                 android:id="@+id/imageViewJoin"
                 android:layout_width="35dp"
                 android:layout_height="35dp"
-                android:src="@drawable/ic_check_circle_gray"/>
+                android:src="@drawable/ic_check_circle_uncheck"/>
 
             <TextView
                 android:id="@+id/textViewJoin"
@@ -76,7 +80,8 @@
                 android:layout_height="match_parent"
                 android:text="Participar"
                 android:gravity="center"
-                android:layout_marginLeft="10dp"/>
+                android:layout_marginLeft="10dp"
+                android:textColor="@color/white"/>
 
             <TextView
                 android:id="@+id/textViewJoiners"
@@ -84,7 +89,8 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:text="0 participantes"
-                android:gravity="center|right"/>
+                android:gravity="center|right"
+                android:textColor="@color/white"/>
 
         </LinearLayout>
 

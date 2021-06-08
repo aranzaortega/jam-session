@@ -23,6 +23,10 @@ public class PostProvider {
         return mCollection.orderBy("timestamp", Query.Direction.DESCENDING);
     }
 
+    public Query getPostsByGenreAndTimestamp(String genre) {
+        return mCollection.whereEqualTo("genre", genre).orderBy("timestamp", Query.Direction.DESCENDING);
+    }
+
     public Query getPostsByUser(String id){
         return mCollection.whereEqualTo("iduser", id);
     }
@@ -34,4 +38,5 @@ public class PostProvider {
     public Task<Void> delete(String id){
         return mCollection.document(id).delete();
     }
+
 }

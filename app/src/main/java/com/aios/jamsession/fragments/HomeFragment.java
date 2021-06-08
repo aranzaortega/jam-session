@@ -50,13 +50,14 @@ public class HomeFragment extends Fragment {
         // Inflate the layout for this fragment
         mView = inflater.inflate(R.layout.fragment_home, container, false);
 
-        mAuthProvider = new AuthProvider();
-        mPostProvider = new PostProvider();
-
         // Instance linear layout for posts
         mRecyclerView = mView.findViewById(R.id.recyclerViewHome);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         mRecyclerView.setLayoutManager(linearLayoutManager);
+
+        mAuthProvider = new AuthProvider();
+        mPostProvider = new PostProvider();
+
 
         // Instances from XML
         mFloatingActionButton = mView.findViewById(R.id.floatingActionButton);
@@ -115,7 +116,7 @@ public class HomeFragment extends Fragment {
                 new FirestoreRecyclerOptions.Builder<Post>()
                     .setQuery(query, Post.class)
                     .build();
-        mPostAdapter = new PostsAdapter(options, getContext());
+        mPostAdapter = new PostsAdapter(options, getContext(), null);
         mRecyclerView.setAdapter(mPostAdapter);
         mPostAdapter.startListening();
     }

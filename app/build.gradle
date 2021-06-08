@@ -60,6 +60,10 @@ dependencies {
     implementation 'com.google.android.gms:play-services-auth:19.0.0'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
 
+    // Dependencies for the Firebase Cloud Messaging and Analytics libraries
+    implementation 'com.google.firebase:firebase-messaging'
+    implementation 'com.google.firebase:firebase-analytics'
+
     // Firebase UI
     implementation 'com.firebaseui:firebase-ui-firestore:7.1.1'
 

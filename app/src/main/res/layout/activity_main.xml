@@ -125,7 +125,7 @@
             android:layout_height="wrap_content"
             android:text="Regístrate aquí"
             android:layout_marginLeft="10dp"
-            android:textColor="@color/white"
+            android:textColor="@color/yellow"
             android:textStyle="bold"/>
     </LinearLayout>
 

@@ -35,13 +35,15 @@ public class PostsAdapter extends FirestoreRecyclerAdapter<Post, PostsAdapter.Vi
     Context context;
     JoinProvider mJoinProvider;
     AuthProvider mAuthProvider;
+    TextView mTextViewSearchNumber;
 
     // Constructor for image
-    public PostsAdapter(FirestoreRecyclerOptions<Post> options, Context context){
+    public PostsAdapter(FirestoreRecyclerOptions<Post> options, Context context, TextView textView){
         super(options);
         this.context = context;
         mJoinProvider = new JoinProvider();
         mAuthProvider = new AuthProvider();
+        mTextViewSearchNumber = textView;
     }
 
     /*Required methods from the Recycler Adapter*/
@@ -52,6 +54,11 @@ public class PostsAdapter extends FirestoreRecyclerAdapter<Post, PostsAdapter.Vi
     protected void onBindViewHolder(@NonNull ViewHolder holder, int position, @NonNull Post post) {
         DocumentSnapshot document = getSnapshots().getSnapshot(position);
         final String postId = document.getId();
+
+        if(mTextViewSearchNumber != null){
+            int numberSearch = getSnapshots().size();
+            mTextViewSearchNumber.setText(String.valueOf(numberSearch));
+        }
 
         holder.textViewTitle.setText(post.getTitle().toUpperCase());
         holder.textViewDescription.setText(post.getDescription());
@@ -110,11 +117,11 @@ public class PostsAdapter extends FirestoreRecyclerAdapter<Post, PostsAdapter.Vi
                 if(numberDocuments > 0){
                     String idJoin = queryDocumentSnapshots.getDocuments().get(0).getId();
                     // If the user doesn't want to join the event anymore
-                    holder.imageViewJoin.setImageResource(R.drawable.ic_check_circle_gray);
+                    holder.imageViewJoin.setImageResource(R.drawable.ic_check_circle_uncheck);
                     mJoinProvider.delete(idJoin);
                 } else {
                     // If the user wants to join the event
-                    holder.imageViewJoin.setImageResource(R.drawable.ic_check_circle_black);
+                    holder.imageViewJoin.setImageResource(R.drawable.ic_check_circle_check);
                     mJoinProvider.create(join);
                 }
             }
@@ -128,9 +135,9 @@ public class PostsAdapter extends FirestoreRecyclerAdapter<Post, PostsAdapter.Vi
                 int numberDocuments = queryDocumentSnapshots.size();
                 // Change color
                 if(numberDocuments > 0){
-                    holder.imageViewJoin.setImageResource(R.drawable.ic_check_circle_black);
+                    holder.imageViewJoin.setImageResource(R.drawable.ic_check_circle_check);
                 } else {
-                    holder.imageViewJoin.setImageResource(R.drawable.ic_check_circle_gray);
+                    holder.imageViewJoin.setImageResource(R.drawable.ic_check_circle_uncheck);
                 }
             }
         });
