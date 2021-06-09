@@ -13,12 +13,17 @@ import com.aios.jamsession.fragments.ChatFragment;
 import com.aios.jamsession.fragments.HomeFragment;
 import com.aios.jamsession.fragments.ProfileFragment;
 import com.aios.jamsession.fragments.SearchFragment;
+import com.aios.jamsession.providers.AuthProvider;
+import com.aios.jamsession.providers.TokenProvider;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class HomeActivity extends AppCompatActivity {
 
     // Variables
     BottomNavigationView bottomNavigation;
+
+    TokenProvider mTokenProvider;
+    AuthProvider mAuthProvider;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,13 +32,15 @@ public class HomeActivity extends AppCompatActivity {
 
         // Instance
         bottomNavigation = findViewById(R.id.bottom_navigation);
+        mTokenProvider = new TokenProvider();
+        mAuthProvider = new AuthProvider();
 
         // Events
         bottomNavigation.setOnNavigationItemSelectedListener(navigationItemSelectedListener);
 
         // Default fragment
         openFragment(new HomeFragment());
-
+        createToken();
     }
 
     // To open other fragments
@@ -66,5 +73,7 @@ public class HomeActivity extends AppCompatActivity {
             }
         };
 
-
+    private void createToken(){
+        mTokenProvider.create(mAuthProvider.getUserId());
+    }
 }

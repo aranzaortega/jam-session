@@ -23,15 +23,17 @@ import android.widget.Toast;
 
 import com.aios.jamsession.R;
 import com.aios.jamsession.adapters.CommentsAdapter;
-import com.aios.jamsession.adapters.PostsAdapter;
 import com.aios.jamsession.adapters.SliderAdapter;
 import com.aios.jamsession.models.Comment;
-import com.aios.jamsession.models.Post;
+import com.aios.jamsession.models.FCMBody;
+import com.aios.jamsession.models.FCMResponse;
 import com.aios.jamsession.models.SliderItem;
 import com.aios.jamsession.providers.AuthProvider;
 import com.aios.jamsession.providers.CommentProvider;
 import com.aios.jamsession.providers.JoinProvider;
+import com.aios.jamsession.providers.NotificationProvider;
 import com.aios.jamsession.providers.PostProvider;
+import com.aios.jamsession.providers.TokenProvider;
 import com.aios.jamsession.providers.UserProvider;
 import com.aios.jamsession.utils.RelativeTime;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
@@ -44,7 +46,6 @@ import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.google.gson.internal.$Gson$Preconditions;
 import com.smarteist.autoimageslider.IndicatorView.animation.type.IndicatorAnimationType;
 import com.smarteist.autoimageslider.SliderAnimations;
 import com.smarteist.autoimageslider.SliderView;
@@ -52,9 +53,14 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class PostDetailActivity extends AppCompatActivity {
 
@@ -87,6 +93,8 @@ public class PostDetailActivity extends AppCompatActivity {
     CommentProvider mCommentProvider;
     AuthProvider mAuthProvider;
     JoinProvider mJoinProvider;
+    NotificationProvider mNotificationProvider;
+    TokenProvider mTokenProvider;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,6 +106,8 @@ public class PostDetailActivity extends AppCompatActivity {
         mCommentProvider = new CommentProvider();
         mAuthProvider = new AuthProvider();
         mJoinProvider = new JoinProvider();
+        mNotificationProvider = new NotificationProvider();
+        mTokenProvider = new TokenProvider();
 
         mSliderView = findViewById(R.id.imageSlider);
         mExtraPostId = getIntent().getStringExtra("id");
@@ -226,7 +236,7 @@ public class PostDetailActivity extends AppCompatActivity {
         alert.show();
     }
 
-    private void createComment(String value) {
+    private void createComment(final String value) {
         Comment comment = new Comment();
         comment.setComment(value);
         comment.setIdPost(mExtraPostId);
@@ -236,9 +246,52 @@ public class PostDetailActivity extends AppCompatActivity {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 if (task.isSuccessful()){
-                    Toast.makeText(PostDetailActivity.this, "Correcto", Toast.LENGTH_SHORT).show();
+                    sendNotification(value);
+                    Toast.makeText(PostDetailActivity.this, "Comentario publicado", Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(PostDetailActivity.this, "No se pudo ingresar el comentario", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+    }
+
+    private void sendNotification(final String value) {
+        if(mIdUser == null){
+            return;
+        }
+        mTokenProvider.getToken(mIdUser).addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                if(documentSnapshot.exists()){
+                    if(documentSnapshot.contains("token")){
+                        // ERROR
+                        String token = documentSnapshot.getString("token");
+                        Map<String, String> data = new HashMap<>();
+                        data.put("title", "NUEVO COMENTARIO");
+                        data.put("body", value);
+                        FCMBody body = new FCMBody(token, "high", "4500s", data);
+                        mNotificationProvider.sendNotification(body).enqueue(new Callback<FCMResponse>() {
+                            @Override
+                            public void onResponse(Call<FCMResponse> call, Response<FCMResponse> response) {
+                                if(response.body() != null){
+                                    if (response.body().getSuccess() == 1){
+                                        Toast.makeText(PostDetailActivity.this, "La notificación se envió correctamente", Toast.LENGTH_SHORT).show();
+                                    } else {
+                                        Toast.makeText(PostDetailActivity.this, "La notificación no pudo enviarse existosamente", Toast.LENGTH_SHORT).show();
+                                    }
+                                } else {
+                                    Toast.makeText(PostDetailActivity.this, "La notificación no pudo enviarse porque el comentario es nulo", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(Call<FCMResponse> call, Throwable t) {
+
+                            }
+                        });
+                    }
+                } else {
+                    Toast.makeText(PostDetailActivity.this, "Token de notificaciones del usuario no existe", Toast.LENGTH_SHORT).show();
                 }
             }
         });

@@ -1,16 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.aios.jamsession">
+
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <application android:allowBackup="true" android:icon="@drawable/logo"
+
+    <application
+        android:allowBackup="true"
+        android:icon="@drawable/logo"
         android:label="@string/app_name"
         android:roundIcon="@drawable/logo"
         android:supportsRtl="true"
         android:theme="@style/Theme.JamSession">
-        <activity android:name=".activities.SearchActivity" android:parentActivityName=".activities.HomeActivity"/>
-        <activity android:name=".activities.UserProfileActivity" android:parentActivityName=".activities.PostDetailActivity" />
-        <activity android:name=".activities.PostDetailActivity" android:parentActivityName=".activities.HomeActivity" />
+        <activity android:name=".activities.ChatActivity"></activity>
+        <activity
+            android:name=".activities.SearchActivity"
+            android:parentActivityName=".activities.HomeActivity" />
+        <activity
+            android:name=".activities.UserProfileActivity"
+            android:parentActivityName=".activities.PostDetailActivity" />
+        <activity
+            android:name=".activities.PostDetailActivity"
+            android:parentActivityName=".activities.HomeActivity" />
         <activity android:name=".activities.EditProfileActivity" />
         <activity android:name=".activities.PostActivity" />
         <activity android:name=".activities.CompleteProfileActivity" />
@@ -19,9 +30,11 @@
         <activity android:name=".activities.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <service
             android:name=".services.MyFirebaseMessagingClient"
             android:exported="false">
@@ -29,5 +42,10 @@
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
+
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_channel_id"
+            android:value="@string/default_notification_channel_id" />
     </application>
+
 </manifest>

@@ -24,6 +24,7 @@ import com.aios.jamsession.providers.PostProvider;
 import com.aios.jamsession.providers.UserProvider;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestoreException;
@@ -46,6 +47,7 @@ public class UserProfileActivity extends AppCompatActivity {
     CircleImageView mCircleImageProfile;
     TextView mTextViewPostsExist;
     Toolbar mToolbar;
+    FloatingActionButton mFloatingActionButtonChat;
 
     UserProvider mUserProvider;
     AuthProvider mAuthProvider;
@@ -65,6 +67,7 @@ public class UserProfileActivity extends AppCompatActivity {
         mCircleImageProfile = findViewById(R.id.circleImageProfile);
         mTextViewPostsExist = findViewById(R.id.textViewPostsExist);
         mToolbar = findViewById(R.id.toolBar);
+        mFloatingActionButtonChat = findViewById(R.id.floatingActionButtonChat);
 
         setSupportActionBar(mToolbar);
         getSupportActionBar().setTitle("");
@@ -80,10 +83,29 @@ public class UserProfileActivity extends AppCompatActivity {
 
         mExtraIdUser = getIntent().getStringExtra("iduser");
 
+        // Validate if the it is current user to hide chat button
+        if(mAuthProvider.getUserId().equals(mExtraIdUser)){
+            mFloatingActionButtonChat.setVisibility(View.GONE);
+        }
+
+        mFloatingActionButtonChat.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                goToChatActivity();
+            }
+        });
+
         getUser();
         getPostsNumber();
         checkIfExistPosts();
 
+    }
+
+    private void goToChatActivity() {
+        Intent intent = new Intent(UserProfileActivity.this, ChatActivity.class);
+        intent.putExtra("idUser1", mAuthProvider.getUserId());
+        intent.putExtra("idUser2", mExtraIdUser);
+        startActivity(intent);
     }
 
     private void checkIfExistPosts() {
