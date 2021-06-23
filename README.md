@@ -8,8 +8,9 @@ Esta es la aplicación que he realizado como proyecto final del Grado Superior e
 
 Por si quieres un resumen del proyecto (el PDF de mi presentación)
 
-![Presentation](gitRes/JamSessionPresentation.pdf)
+https://github.com/aranzaortega/jam-session/blob/main/gitRes/JamSessionPresentation.pdf
 
 Y el PDF del proyecto entero
-![Project](gitRes/JamSessionProject.pdf)
+
+https://github.com/aranzaortega/jam-session/blob/main/gitRes/JamSessionDocument.pdf
 
