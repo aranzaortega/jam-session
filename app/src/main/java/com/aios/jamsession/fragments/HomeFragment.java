@@ -61,7 +61,7 @@ public class HomeFragment extends Fragment {
 
         // Instances from XML
         mFloatingActionButton = mView.findViewById(R.id.floatingActionButton);
-        mToolbar = mView.findViewById(R.id.ToolBar);
+        mToolbar = mView.findViewById(R.id.toolBar);
         ((AppCompatActivity) getActivity()).setSupportActionBar(mToolbar);
         ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Publicaciones");
         setHasOptionsMenu(true);
